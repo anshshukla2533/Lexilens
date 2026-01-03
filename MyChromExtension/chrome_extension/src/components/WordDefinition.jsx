@@ -3,46 +3,69 @@ import React from 'react';
 const WordDefinition = ({ wordData }) => {
   if (!wordData) return null;
 
+  const styles = {
+    container: { padding: '16px', fontFamily: 'system-ui, -apple-system, sans-serif' },
+    header: { borderBottom: '1px solid #e5e7eb', paddingBottom: '12px' },
+    title: { fontSize: '24px', fontWeight: 'bold', color: '#111827', margin: 0 },
+    description: { fontSize: '14px', color: '#2563eb', fontWeight: '500', marginTop: '4px' },
+    imageContainer: { display: 'flex', justifyContent: 'center', marginTop: '16px', marginBottom: '16px' },
+    image: { borderRadius: '8px', maxHeight: '192px', objectFit: 'cover' },
+    content: { marginTop: '12px' },
+    extract: { color: '#1f2937', lineHeight: '1.6', margin: 0 },
+    link: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      fontSize: '14px',
+      color: '#2563eb',
+      fontWeight: '500',
+      textDecoration: 'none',
+      marginTop: '12px'
+    },
+    footer: {
+      paddingTop: '12px',
+      borderTop: '1px solid #e5e7eb',
+      marginTop: '12px',
+      fontSize: '12px',
+      color: '#6b7280'
+    }
+  };
+
   return (
-    <div className="p-4 space-y-4">
-      <div className="border-b pb-3">
-        <h2 className="text-2xl font-bold text-gray-900">{wordData.word}</h2>
-        {wordData.phonetic && (
-          <p className="text-gray-600 italic mt-1">{wordData.phonetic}</p>
+    <div style={styles.container}>
+      <div style={styles.header}>
+        <h2 style={styles.title}>{wordData.word}</h2>
+        {wordData.description && (
+          <p style={styles.description}>{wordData.description}</p>
         )}
       </div>
 
-      <div className="space-y-4">
-        {wordData.meanings.map((meaning, idx) => (
-          <div key={idx} className="space-y-2">
-            <h3 className="text-sm font-semibold text-blue-600 uppercase tracking-wide">
-              {meaning.partOfSpeech}
-            </h3>
-            
-            <div className="space-y-3">
-              {meaning.definitions.map((def, defIdx) => (
-                <div key={defIdx} className="pl-4 border-l-2 border-gray-200">
-                  <p className="text-gray-800">{def.definition}</p>
-                  
-                  {def.example && (
-                    <p className="text-gray-600 italic text-sm mt-1">
-                      Example: "{def.example}"
-                    </p>
-                  )}
-                  
-                  {def.synonyms.length > 0 && (
-                    <div className="mt-1">
-                      <span className="text-xs text-gray-500">Synonyms: </span>
-                      <span className="text-xs text-blue-600">
-                        {def.synonyms.slice(0, 5).join(', ')}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
+      {wordData.thumbnail && (
+        <div style={styles.imageContainer}>
+          <img 
+            src={wordData.thumbnail} 
+            alt={wordData.word}
+            style={styles.image}
+          />
+        </div>
+      )}
+
+      <div style={styles.content}>
+        <p style={styles.extract}>{wordData.extract}</p>
+        
+        {wordData.url && (
+          <a
+            href={wordData.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={styles.link}
+          >
+            Read more on Wikipedia →
+          </a>
+        )}
+      </div>
+
+      <div style={styles.footer}>
+        Source: Wikipedia
       </div>
     </div>
   );

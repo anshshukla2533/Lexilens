@@ -3,44 +3,68 @@ import React from 'react';
 const WordDefinition = ({ wordData }) => {
   if (!wordData) return null;
 
+  const styles = {
+    container: { padding: '16px', fontFamily: 'system-ui, -apple-system, sans-serif' },
+    header: { borderBottom: '1px solid #e5e7eb', paddingBottom: '12px' },
+    title: { fontSize: '24px', fontWeight: 'bold', color: '#111827', margin: 0 },
+    description: { fontSize: '14px', color: '#2563eb', fontWeight: '500', marginTop: '4px' },
+    imageContainer: { display: 'flex', justifyContent: 'center', marginTop: '16px', marginBottom: '16px' },
+    image: { borderRadius: '8px', maxHeight: '192px', objectFit: 'cover' },
+    content: { marginTop: '12px' },
+    extract: { color: '#1f2937', lineHeight: '1.6', margin: 0 },
+    link: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      fontSize: '14px',
+      color: '#2563eb',
+      fontWeight: '500',
+      textDecoration: 'none',
+      marginTop: '12px'
+    },
+    footer: {
+      paddingTop: '12px',
+      borderTop: '1px solid #e5e7eb',
+      marginTop: '12px',
+      fontSize: '12px',
+      color: '#6b7280'
+    }
+  };
+
   return (
-    <div className="p-4 space-y-4">
-      <div className="border-b pb-3">
-        <h2 className="text-2xl font-bold text-gray-900">{wordData.word}</h2>
+    <div style={styles.container}>
+      <div style={styles.header}>
+        <h2 style={styles.title}>{wordData.word}</h2>
         {wordData.description && (
-          <p className="text-sm text-blue-600 font-medium mt-1">{wordData.description}</p>
+          <p style={styles.description}>{wordData.description}</p>
         )}
       </div>
 
       {wordData.thumbnail && (
-        <div className="flex justify-center">
+        <div style={styles.imageContainer}>
           <img 
             src={wordData.thumbnail} 
             alt={wordData.word}
-            className="rounded-lg max-h-48 object-cover"
+            style={styles.image}
           />
         </div>
       )}
 
-      <div className="space-y-3">
-        <p className="text-gray-800 leading-relaxed">{wordData.extract}</p>
+      <div style={styles.content}>
+        <p style={styles.extract}>{wordData.extract}</p>
         
         {wordData.url && (
           <a
             href={wordData.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center text-sm text-blue-600 hover:text-blue-700 font-medium"
+            style={styles.link}
           >
-            Read more on Wikipedia
-            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
+            Read more on Wikipedia →
           </a>
         )}
       </div>
 
-      <div className="pt-3 border-t text-xs text-gray-500">
+      <div style={styles.footer}>
         Source: Wikipedia
       </div>
     </div>
