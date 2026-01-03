@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import WordDefinition from '../components/WordDefinition';
+import WordDefinition from '../components/WordDefination';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
 import { getHistory } from '../utils/storage';
