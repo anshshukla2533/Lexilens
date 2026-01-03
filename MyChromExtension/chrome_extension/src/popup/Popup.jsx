@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import WordDefinition from '../components/WordDefination';
+import WordDefinition from '../components/WordDefinition';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
 import { getHistory } from '../utils/storage';
@@ -40,7 +40,7 @@ const Popup = () => {
         setWordData(response.data);
         loadHistory();
       } else {
-        setError(response.error || 'Word not found');
+        setError(response.error || 'Information not found');
       }
     } catch (err) {
       setError('An error occurred. Please try again.');
@@ -58,7 +58,7 @@ const Popup = () => {
     <div className="w-96 min-h-[400px] max-h-[600px] bg-white">
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4 text-white">
         <h1 className="text-xl font-bold">Word Info Extension</h1>
-        <p className="text-sm text-blue-100">Get instant word definitions</p>
+        <p className="text-sm text-blue-100">Get instant Wikipedia information</p>
       </div>
 
       <div className="p-4">
@@ -68,7 +68,7 @@ const Popup = () => {
               type="text"
               value={searchWord}
               onChange={(e) => setSearchWord(e.target.value)}
-              placeholder="Enter a word..."
+              placeholder="Search anything..."
               className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
@@ -110,9 +110,9 @@ const Popup = () => {
           {!loading && !error && !wordData && (
             <div className="text-center py-8 text-gray-500">
               <svg className="w-16 h-16 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
               </svg>
-              <p>Search for a word or select text on any webpage</p>
+              <p>Search anything or select text on any webpage</p>
             </div>
           )}
         </div>

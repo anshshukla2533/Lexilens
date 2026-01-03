@@ -1,38 +1,45 @@
-// API service for fetching word information
+// API service for fetching word information from Wikipedia
 
-const DICTIONARY_API = 'https://api.dictionaryapi.dev/api/v2/entries/en';
+const WIKIPEDIA_API = 'https://en.wikipedia.org/api/rest_v1/page/summary';
+const WIKIPEDIA_SEARCH_API = 'https://en.wikipedia.org/w/api.php';
 
 export const fetchWordInfo = async (word) => {
   try {
-    const response = await fetch(`${DICTIONARY_API}/${word.toLowerCase()}`);
+    // First, search for the term to get the correct page title
+    const searchUrl = `${WIKIPEDIA_SEARCH_API}?action=opensearch&search=${encodeURIComponent(word)}&limit=1&format=json&origin=*`;
+    const searchResponse = await fetch(searchUrl);
+    const searchData = await searchResponse.json();
     
-    if (!response.ok) {
-      throw new Error('Word not found');
+    if (!searchData[1] || searchData[1].length === 0) {
+      throw new Error('No results found');
     }
     
-    const data = await response.json();
-    return formatWordData(data[0]);
+    const pageTitle = searchData[1][0];
+    const pageUrl = searchData[3][0];
+    
+    // Get page summary
+    const summaryResponse = await fetch(`${WIKIPEDIA_API}/${encodeURIComponent(pageTitle)}`);
+    
+    if (!summaryResponse.ok) {
+      throw new Error('Information not found');
+    }
+    
+    const summaryData = await summaryResponse.json();
+    return formatWikipediaData(summaryData, pageUrl);
   } catch (error) {
     console.error('Error fetching word info:', error);
     throw error;
   }
 };
 
-const formatWordData = (data) => {
-  const meanings = data.meanings.map(meaning => ({
-    partOfSpeech: meaning.partOfSpeech,
-    definitions: meaning.definitions.slice(0, 3).map(def => ({
-      definition: def.definition,
-      example: def.example || null,
-      synonyms: def.synonyms || []
-    }))
-  }));
-
+const formatWikipediaData = (data, pageUrl) => {
   return {
-    word: data.word,
-    phonetic: data.phonetic || '',
-    meanings: meanings,
-    sourceUrls: data.sourceUrls || []
+    word: data.title,
+    extract: data.extract,
+    description: data.description || '',
+    thumbnail: data.thumbnail?.source || null,
+    url: pageUrl,
+    type: data.type || 'standard'
   };
 };
 
