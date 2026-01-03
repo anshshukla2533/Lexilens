@@ -7,42 +7,41 @@ const WordDefinition = ({ wordData }) => {
     <div className="p-4 space-y-4">
       <div className="border-b pb-3">
         <h2 className="text-2xl font-bold text-gray-900">{wordData.word}</h2>
-        {wordData.phonetic && (
-          <p className="text-gray-600 italic mt-1">{wordData.phonetic}</p>
+        {wordData.description && (
+          <p className="text-sm text-blue-600 font-medium mt-1">{wordData.description}</p>
         )}
       </div>
 
-      <div className="space-y-4">
-        {wordData.meanings.map((meaning, idx) => (
-          <div key={idx} className="space-y-2">
-            <h3 className="text-sm font-semibold text-blue-600 uppercase tracking-wide">
-              {meaning.partOfSpeech}
-            </h3>
-            
-            <div className="space-y-3">
-              {meaning.definitions.map((def, defIdx) => (
-                <div key={defIdx} className="pl-4 border-l-2 border-gray-200">
-                  <p className="text-gray-800">{def.definition}</p>
-                  
-                  {def.example && (
-                    <p className="text-gray-600 italic text-sm mt-1">
-                      Example: "{def.example}"
-                    </p>
-                  )}
-                  
-                  {def.synonyms.length > 0 && (
-                    <div className="mt-1">
-                      <span className="text-xs text-gray-500">Synonyms: </span>
-                      <span className="text-xs text-blue-600">
-                        {def.synonyms.slice(0, 5).join(', ')}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
+      {wordData.thumbnail && (
+        <div className="flex justify-center">
+          <img 
+            src={wordData.thumbnail} 
+            alt={wordData.word}
+            className="rounded-lg max-h-48 object-cover"
+          />
+        </div>
+      )}
+
+      <div className="space-y-3">
+        <p className="text-gray-800 leading-relaxed">{wordData.extract}</p>
+        
+        {wordData.url && (
+          <a
+            href={wordData.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center text-sm text-blue-600 hover:text-blue-700 font-medium"
+          >
+            Read more on Wikipedia
+            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </a>
+        )}
+      </div>
+
+      <div className="pt-3 border-t text-xs text-gray-500">
+        Source: Wikipedia
       </div>
     </div>
   );
