@@ -39,6 +39,7 @@ const ContentScript = () => {
   // Listen for messages from background script
   useEffect(() => {
     const messageListener = (message) => {
+      // Handle context menu selection
       if (message.action === 'showWordInfo') {
         setSelectedWord(message.word);
         fetchWordInfo(message.word);
@@ -48,6 +49,33 @@ const ContentScript = () => {
           x: window.innerWidth / 2 - 200,
           y: window.scrollY + 100
         });
+      }
+      
+      // Handle Ctrl+Shift+Y clipboard search
+      if (message.action === 'showWordInfoFromClipboard') {
+        if (message.error) {
+          setError(message.error);
+          setLoading(false);
+          setWordData(null);
+          setSelectedWord('');
+          
+          // Position at center of viewport
+          setPosition({
+            x: window.innerWidth / 2 - 200,
+            y: window.scrollY + 100
+          });
+        } else if (message.data) {
+          setSelectedWord(message.word);
+          setWordData(message.data);
+          setError(null);
+          setLoading(false);
+          
+          // Position at center of viewport
+          setPosition({
+            x: window.innerWidth / 2 - 200,
+            y: window.scrollY + 100
+          });
+        }
       }
     };
 

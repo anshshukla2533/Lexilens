@@ -14,17 +14,32 @@ const Popup = () => {
 
   useEffect(() => {
     loadHistory();
+    checkClipboardWord();
   }, []);
+
+  const checkClipboardWord = async () => {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        action: 'getClipboardWord'
+      });
+
+      if (response && response.word && response.triggerSearch) {
+        setSearchWord(response.word);
+        // Automatically search the clipboard word
+        performSearch(response.word);
+      }
+    } catch (error) {
+      console.error('Error checking clipboard word:', error);
+    }
+  };
 
   const loadHistory = async () => {
     const hist = await getHistory();
     setHistory(hist);
   };
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    
-    if (!searchWord.trim()) return;
+  const performSearch = async (word) => {
+    if (!word.trim()) return;
 
     setLoading(true);
     setError(null);
@@ -33,7 +48,7 @@ const Popup = () => {
     try {
       const response = await chrome.runtime.sendMessage({
         action: 'fetchWordInfo',
-        word: searchWord
+        word: word
       });
 
       if (response.success) {
@@ -49,9 +64,15 @@ const Popup = () => {
     }
   };
 
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    performSearch(searchWord);
+  };
+
   const handleHistoryClick = (word) => {
     setSearchWord(word);
     setShowHistory(false);
+    performSearch(word);
   };
 
   return (
@@ -112,7 +133,7 @@ const Popup = () => {
               <svg className="w-16 h-16 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
               </svg>
-              <p>Search anything or select text on any webpage</p>
+              <p>Search anything or press Ctrl+Shift+Y with copied text</p>
             </div>
           )}
         </div>

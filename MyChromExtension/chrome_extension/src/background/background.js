@@ -1,12 +1,61 @@
 // Background service worker
 
-// Listen for messages from content script
+// Listen for keyboard shortcut (Ctrl+Shift+Y)
+chrome.commands.onCommand.addListener(async (command) => {
+  if (command === 'search-clipboard') {
+    try {
+      // Read text from clipboard
+      const clipboardText = await navigator.clipboard.readText();
+      
+      if (!clipboardText || !clipboardText.trim()) {
+        console.log('Clipboard is empty');
+        // Still open popup even if clipboard is empty
+        chrome.action.openPopup();
+        return;
+      }
+
+      const word = clipboardText.trim();
+      
+      // Store the clipboard word temporarily
+      await chrome.storage.local.set({ 
+        clipboardWord: word,
+        triggerSearch: true 
+      });
+      
+      // Open the popup
+      chrome.action.openPopup();
+      
+    } catch (error) {
+      console.error('Error reading clipboard:', error);
+      // Still try to open popup
+      chrome.action.openPopup();
+    }
+  }
+});
+
+// Listen for messages from popup and content script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'fetchWordInfo') {
     fetchWordData(request.word)
-      .then(data => sendResponse({ success: true, data }))
+      .then(data => {
+        // Save to history
+        saveToHistory(request.word, data);
+        sendResponse({ success: true, data });
+      })
       .catch(error => sendResponse({ success: false, error: error.message }));
     return true; // Keep channel open for async response
+  }
+  
+  if (request.action === 'getClipboardWord') {
+    chrome.storage.local.get(['clipboardWord', 'triggerSearch'], (result) => {
+      sendResponse({ 
+        word: result.clipboardWord || '',
+        triggerSearch: result.triggerSearch || false
+      });
+      // Clear the trigger flag
+      chrome.storage.local.remove(['clipboardWord', 'triggerSearch']);
+    });
+    return true;
   }
 });
 
@@ -51,6 +100,23 @@ function formatWikipediaData(data, pageUrl) {
     url: pageUrl,
     type: data.type || 'standard'
   };
+}
+
+// Save search to history
+async function saveToHistory(word, data) {
+  const result = await chrome.storage.local.get(['searchHistory']);
+  let history = result.searchHistory || [];
+  
+  // Add new search at the beginning
+  history.unshift({
+    word: word,
+    timestamp: Date.now()
+  });
+  
+  // Keep only last 10 searches
+  history = history.slice(0, 10);
+  
+  await chrome.storage.local.set({ searchHistory: history });
 }
 
 // Context menu
