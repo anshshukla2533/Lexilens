@@ -7,7 +7,7 @@
     "storage",
     "activeTab",
     "contextMenus",
-    "clipboardRead"
+    "scripting"
   ],
   "host_permissions": [
     "https://*/*"

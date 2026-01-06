@@ -4,21 +4,32 @@
 chrome.commands.onCommand.addListener(async (command) => {
   if (command === 'search-clipboard') {
     try {
-      // Read text from clipboard
-      const clipboardText = await navigator.clipboard.readText();
+      // Get the active tab
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       
-      if (!clipboardText || !clipboardText.trim()) {
-        console.log('Clipboard is empty');
-        // Still open popup even if clipboard is empty
+      if (!tab) {
+        console.error('No active tab found');
+        return;
+      }
+
+      // Get selected text from the page
+      const result = await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: () => window.getSelection().toString().trim()
+      });
+
+      const selectedText = result[0]?.result || '';
+      
+      if (!selectedText) {
+        console.log('No text selected');
+        // Still open popup even if nothing is selected
         chrome.action.openPopup();
         return;
       }
 
-      const word = clipboardText.trim();
-      
-      // Store the clipboard word temporarily
+      // Store the selected word temporarily
       await chrome.storage.local.set({ 
-        clipboardWord: word,
+        selectedWord: selectedText,
         triggerSearch: true 
       });
       
@@ -26,7 +37,7 @@ chrome.commands.onCommand.addListener(async (command) => {
       chrome.action.openPopup();
       
     } catch (error) {
-      console.error('Error reading clipboard:', error);
+      console.error('Error getting selected text:', error);
       // Still try to open popup
       chrome.action.openPopup();
     }
@@ -46,14 +57,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true; // Keep channel open for async response
   }
   
-  if (request.action === 'getClipboardWord') {
-    chrome.storage.local.get(['clipboardWord', 'triggerSearch'], (result) => {
+  if (request.action === 'getSelectedWord') {
+    chrome.storage.local.get(['selectedWord', 'triggerSearch'], (result) => {
       sendResponse({ 
-        word: result.clipboardWord || '',
+        word: result.selectedWord || '',
         triggerSearch: result.triggerSearch || false
       });
       // Clear the trigger flag
-      chrome.storage.local.remove(['clipboardWord', 'triggerSearch']);
+      chrome.storage.local.remove(['selectedWord', 'triggerSearch']);
     });
     return true;
   }

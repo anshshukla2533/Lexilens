@@ -20,16 +20,16 @@ const Popup = () => {
   const checkClipboardWord = async () => {
     try {
       const response = await chrome.runtime.sendMessage({
-        action: 'getClipboardWord'
+        action: 'getSelectedWord'
       });
 
       if (response && response.word && response.triggerSearch) {
         setSearchWord(response.word);
-        // Automatically search the clipboard word
+        // Automatically search the selected word
         performSearch(response.word);
       }
     } catch (error) {
-      console.error('Error checking clipboard word:', error);
+      console.error('Error checking selected word:', error);
     }
   };
 
@@ -133,7 +133,7 @@ const Popup = () => {
               <svg className="w-16 h-16 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
               </svg>
-              <p>Search anything or press Ctrl+Shift+Y with copied text</p>
+              <p>Search anything or select text and press Ctrl+Shift+Y</p>
             </div>
           )}
         </div>
