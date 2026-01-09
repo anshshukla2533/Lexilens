@@ -1,4 +1,5 @@
-#  Word Info Extension
+#  lexilens
+
 
 A Chrome extension that provides instant information about any word you select on the web.
 You dont even to search , you just need to select and press ctrl+shift+y it will automatically give the result
