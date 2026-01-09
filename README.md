@@ -1,12 +1,9 @@
 #  Word Info Extension
 
-A Chrome extension that provides instant Wikipedia information about any word you select on the web.
+A Chrome extension that provides instant information about any word you select on the web.
 You dont even to search , you just need to select and press ctrl+shift+y it will automatically give the result
 It is solving the the need of changing a tab to get a inofmration about soemhting .
-![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-green?logo=googlechrome)
-![Manifest V3](https://img.shields.io/badge/Manifest-V3-blue)
-![React](https://img.shields.io/badge/React-18.2-61DAFB?logo=react)
-![Vite](https://img.shields.io/badge/Vite-5.0-646CFF?logo=vite)
+
 
 ##  Features
 
